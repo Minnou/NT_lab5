@@ -38,9 +38,7 @@ def create_dataset_from_files(files: list):
                 else:
                     result_data_frame = pd.concat([data_frames[1], data_frames[0]], axis=1)
                 return result_data_frame
-        result_data_frame = pd.DataFrame()
-        for data_frame in data_frames:
-            result_data_frame = pd.concat([result_data_frame, data_frame], axis=0)
+        result_data_frame = pd.concat(data_frames, ignore_index=True)
         return result_data_frame
 
 def get_value(date: str, files: list):
