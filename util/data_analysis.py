@@ -7,15 +7,12 @@ def create_graph_whole_period(df: pd.DataFrame):
         df: DataFrame, содержащий столбцы 'date' и 'value'.
     """
     plt.figure(figsize=(10, 6))
-    plt.plot(df['date'], df['value'], marker='o', linestyle='-', color='b', label='Value')
+    plt.plot(df['date'], df['value'], linestyle='-', color='b', label='Value')
 
     plt.title('Изменение курса за весь период', fontsize=16)
     plt.xlabel('Дата', fontsize=14)
     plt.ylabel('Курс', fontsize=14)
     plt.xticks(rotation=45)
-
-    for i, value in enumerate(df['value']):
-        plt.text(df['date'].iloc[i], value, f'{value:.2f}', fontsize=6, ha='right')
 
     plt.grid(True)
     plt.legend()

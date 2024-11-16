@@ -65,8 +65,6 @@ class MainWindow(QMainWindow):
 
         splitting_layout.addLayout(split_button_layout)
 
-        self.setLayout(layout)
-
         self.setWindowTitle('Крутейшее приложение')
         self.setGeometry(400, 400, 400, 400)
         self.show()
@@ -110,6 +108,29 @@ class MainWindow(QMainWindow):
         self.button_month.setEnabled(False)
 
         processing_layout.addLayout(proc_button_layout)
+        
+        # Третья вкладка
+        self.info_tab = QWidget()
+        info_layout = QVBoxLayout(self.info_tab)
+        
+        self.tab_widget.addTab(self.info_tab, "Информация")
+
+        self.info_table = QTableWidget()
+        self.info_table.setColumnCount(4)
+        self.info_table.setHorizontalHeaderLabels(["Характеристика", "Стоимость", "Отклонение от медианы", "Отклонение от среднего"])
+
+        info_layout.addWidget(self.info_table)
+
+        info_button_layout = QHBoxLayout()
+        self.button_info = QPushButton('Вывести информацию')
+
+        self.button_info.clicked.connect(self.get_info)
+
+        info_button_layout.addWidget(self.button_info)
+
+        self.button_info.setEnabled(False)
+
+        info_layout.addLayout(info_button_layout)
 
     def on_file_open_click(self):
         self.datasetpaths = QFileDialog.getOpenFileNames(self, 'Выберите файл',filter="*.csv")[0]
@@ -125,6 +146,8 @@ class MainWindow(QMainWindow):
         self.button_whole.setEnabled(True)
         self.button_month.setEnabled(True)
         self.df = data_analysis.prepare_df(find_value.create_dataset_from_files(self.datasetpaths))
+        
+        self.button_info.setEnabled(True)
 
         self.fill_table(self.df, self.split_table)
         self.fill_table(self.df, self.proc_table)
@@ -252,7 +275,6 @@ class MainWindow(QMainWindow):
         return None 
     
     def fill_table(self, df: pd.DataFrame, table : QTableWidget):
-        table.clear()
         table.setRowCount(0)
         i = 0
         for index, line in find_value.DataFrameIterator(df):
@@ -284,6 +306,17 @@ class MainWindow(QMainWindow):
         month = self.open_calendar('Введите месяц')
         if month != None:
             data_analysis.create_graph_month(self.df, month[:-3])
+            
+    def get_info(self):
+        median_value = self.df['value'].median()
+        mean_value = self.df['value'].mean()
+
+        stats = self.df[['value', 'deviation_from_median', 'deviation_from_mean']].describe()
+        stats.insert(loc=0, column='index', value=stats.index)
+        row = ['median',median_value,0,mean_value-median_value]
+        stats.loc[len(stats.index)] = row
+        self.fill_table(stats, self.info_table)
+        
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
