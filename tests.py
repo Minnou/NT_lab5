@@ -270,7 +270,6 @@ class TestGetValue(unittest.TestCase):
     def test_combined_datasets(self):
         """Тест работы с объединенными файлами."""
         result = find_value.create_dataset_from_files([self.file1, self.file2])
-        print(result)
         self.assertEqual(result.shape[0], 5)  # Объединенный датасет должен содержать 5 строк
 
         value = find_value.get_value("2023-01-03", [self.file1, self.file2])
